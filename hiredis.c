@@ -1156,7 +1156,7 @@ int redisBufferRead(redisContext *c) {
     if (c->err)
         return REDIS_ERR;
 
-    nread = (int)read(c->fd,buf,sizeof(buf));                                   WIN_PORT_FIX /* cast (int) */
+    nread = (int)fdx_read(c->fd,buf,sizeof(buf));                                   WIN_PORT_FIX /* cast (int) */
     if (nread == -1) {
         if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || (errno == EINTR)) {
             /* Try again later */
@@ -1220,7 +1220,7 @@ int redisBufferWrite(redisContext *c, int *done) {
         return REDIS_ERR;
 
     if (sdslen(c->obuf) > 0) {
-        nwritten = (int)write(c->fd,c->obuf,sdslen(c->obuf));                   WIN_PORT_FIX /* cast (int) */
+        nwritten = (int)fdx_write(c->fd,c->obuf,sdslen(c->obuf));                   WIN_PORT_FIX /* cast (int) */
         if (nwritten == -1) {
             if ((errno == EAGAIN && !(c->flags & REDIS_BLOCK)) || (errno == EINTR)) {
                 /* Try again later */
